@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Special Record</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&family=Noto+Serif+KR:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2d6a4f;
+            --soft-beige: #f4f1ea;
+            --gold-accent: #b8977e;
+            --error-red: #d63031;
+            --transition: 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        /* 전체 레이아웃: 모바일에서 상하 중앙 정렬 */
+        body { 
+            margin: 0; background: #e5e5e5; font-family: 'Noto Serif KR', serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; width: 100vw; overflow: hidden; position: fixed;
+        }
+
+        /* --- 잠금 화면 (Overlay) --- */
+        #lock-screen {
+            position: fixed; inset: 0; background: var(--soft-beige); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+        .lock-box { text-align: center; width: 80%; max-width: 280px; }
+        .lock-box p { color: var(--primary-green); font-weight: 700; margin-bottom: 25px; font-size: 1.1rem; }
+        
+        /* 모바일 줌 방지를 위해 폰트사이즈 16px 유지 */
+        #pw-input {
+            width: 100%; padding: 15px; border: 1px solid var(--gold-accent); border-radius: 12px;
+            text-align: center; font-size: 16px; margin-bottom: 15px; outline: none;
+            background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        #start-btn {
+            width: 100%; padding: 15px; border: none; background: var(--primary-green);
+            color: white; font-size: 1rem; border-radius: 12px; cursor: pointer; font-weight: bold;
+        }
+        #error-msg { color: var(--error-red); font-size: 0.85rem; margin-top: 12px; display: none; }
+
+        /* --- 네비게이션 (모바일에서 누르기 편하게 높이 조절) --- */
+        nav { margin-bottom: 20px; z-index: 100; display: flex; gap: 25px; opacity: 0; transition: 1s; }
+        nav.show { opacity: 1; }
+        nav button { 
+            background: none; border: none; font-family: 'Montserrat'; 
+            text-transform: uppercase; cursor: pointer; color: var(--primary-green); 
+            font-size: 0.9rem; font-weight: 400; padding: 10px;
+        }
+
+        /* --- 책 디자인 (반응형 높이/너비) --- */
+        .book { position: relative; width: 90vw; max-width: 380px; height: 65vh; perspective: 1500px; }
+        .page {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            background: var(--soft-beige); padding: 30px; border-radius: 4px 15px 15px 4px;
+            box-shadow: inset 3px 0 10px rgba(0,0,0,0.1), 8px 8px 20px rgba(0,0,0,0.08);
+            transform-origin: left center; transition: var(--transition);
+            visibility: hidden; display: flex; flex-direction: column; align-items: center;
+            overflow-y: auto; /* 내용이 길어질 경우 대비 */
+        }
+        .page.active { visibility: visible; z-index: 10; transform: rotateY(0deg); opacity: 1; }
+        .page.flipped { visibility: visible; z-index: 1; transform: rotateY(-180deg); opacity: 0; }
+
+        /* 이미지 프레임 최적화 */
+        .img-frame { width: 100%; min-height: 220px; background: #eee; margin: 15px 0; overflow: hidden; border-radius: 8px; }
+        .img-frame img { width: 100%; height: 100%; object-fit: cover; }
+        
+        h2 { font-family: 'Montserrat'; font-size: 1.2rem; color: var(--primary-green); border-bottom: 2px solid var(--gold-accent); padding-bottom: 5px; margin-top: 0; }
+        .page-text { font-size: 0.95rem; line-height: 1.8; text-align: center; color: #333; word-break: keep-all; }
+
+        /* 하단 컨트롤 버튼 */
+        #music-toggle { 
+            position: fixed; bottom: 30px; right: 20px; padding: 12px 20px; 
+            border-radius: 30px; background: var(--primary-green); color: white; 
+            border: none; display: none; z-index: 1000; font-size: 0.8rem; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        #yt-player { position: absolute; top: -9999px; left: -9999px; }
+
+        .shake { animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    </style>
+</head>
+<body>
+
+<div id="lock-screen">
+    <div class="lock-box" id="lock-content">
+        <p>우리만의 날짜 4자리를<br>입력해줘 ❤️</p>
+        <input type="number" id="pw-input" placeholder="0000" inputmode="numeric" pattern="[0-9]*">
+        <button id="start-btn" onclick="checkPassword()">기록 열어보기</button>
+        <p id="error-msg">다시 한번 생각해봐! 🥺</p>
+    </div>
+</div>
+
+<div id="yt-player"></div>
+
+<nav id="main-nav">
+    <button onclick="flipPage('p1')">Story</button>
+    <button onclick="flipPage('p2')">Quiz</button>
+    <button onclick="flipPage('p3')">Letter</button>
+</nav>
+
+<div class="book">
+    <div id="p1" class="page active">
+        <h2>THE STORY</h2>
+        <div class="img-frame">
+            <img src="images/mainimage.gif" alt="Memory Image">
+        </div>
+        <p class="page-text">2025년 3월 24일.<br>우리가 처음 만난 그 순간부터<br>오늘까지의 기록이야.</p>
+    </div>
+
+    <div id="p2" class="page">
+        <h2>MEMORY QUIZ</h2>
+        <div style="margin: auto 0; text-align: center;">
+            <p class="page-text">우리가 처음으로 같이<br>먹었던 음식은 무엇일까?</p>
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                <button style="padding: 10px; border: 1px solid var(--gold-accent); background: #fff;">1. 파스타</button>
+                <button style="padding: 10px; border: 1px solid var(--gold-accent); background: #fff;">2. 떡볶이</button>
+                <button style="padding: 10px; border: 1px solid var(--gold-accent); background: #fff;">3. 스테이크</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="p3" class="page">
+        <h2>DEAR YOU</h2>
+        <div style="margin: auto 0; text-align: center;">
+            <p class="page-text" style="font-style: italic; font-size: 1.1rem;">
+                "매일매일 더 사랑해."
+            </p>
+            <p class="page-text" style="margin-top: 30px;">
+                내년 이 시간에도<br>우리는 함께 웃고 있을 거야.<br>항상 내 곁에 있어줘서 고마워.
+            </p>
+            <p style="margin-top:40px; font-weight: bold; color: var(--primary-green); font-size: 1.2rem;">From. 너의 남자친구</p>
+        </div>
+    </div>
+</div>
+
+<button id="music-toggle">🎵 MUSIC START</button>
+
+<script>
+    const CORRECT_PW = "0324"; // 실제 비밀번호로 변경!
+    let currentId = 'p1';
+    let isUnlocked = false;
+    
+    // 효과음 (안정적인 CDN 주소)
+    const flipSound = new Audio("https://raw.githubusercontent.com/ArunMichaelDsouza/book-flip-animation/master/assets/audio/page-flip.mp3");
+
+    function checkPassword() {
+        const input = document.getElementById('pw-input').value;
+        const lockContent = document.getElementById('lock-content');
+        const errorMsg = document.getElementById('error-msg');
+
+        if (input === CORRECT_PW) {
+            unlockExperience();
+        } else {
+            lockContent.classList.add('shake');
+            errorMsg.style.display = 'block';
+            setTimeout(() => lockContent.classList.remove('shake'), 400);
+            document.getElementById('pw-input').value = "";
+        }
+    }
+
+    function unlockExperience() {
+        const lockScreen = document.getElementById('lock-screen');
+        lockScreen.style.opacity = '0';
+        lockScreen.style.pointerEvents = 'none';
+        
+        setTimeout(() => {
+            lockScreen.style.display = 'none';
+            document.getElementById('main-nav').classList.add('show');
+            document.getElementById('music-toggle').style.display = 'block';
+        }, 800);
+
+        flipSound.play().then(() => {
+            flipSound.pause();
+            flipSound.currentTime = 0;
+            isUnlocked = true;
+        }).catch(() => { isUnlocked = true; });
+    }
+
+    function flipPage(targetId) {
+        if (currentId === targetId || !isUnlocked) return;
+
+        try {
+            flipSound.currentTime = 0;
+            flipSound.play();
+        } catch(e) {}
+
+        const pages = ['p1', 'p2', 'p3'];
+        const targetIndex = pages.indexOf(targetId);
+
+        pages.forEach((id, index) => {
+            const page = document.getElementById(id);
+            if (index < targetIndex) {
+                page.className = 'page flipped';
+            } else if (index === targetIndex) {
+                page.className = 'page active';
+            } else {
+                page.className = 'page';
+            }
+        });
+
+        currentId = targetId;
+    }
+
+    // 유튜브 BGM 설정 (ID: NE69eGDA9tk)
+    const VIDEO_ID = 'NE69eGDA9tk'; 
+    let player, isApiReady = false, isPlaying = false;
+
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('yt-player', {
+            height: '0', width: '0', videoId: VIDEO_ID,
+            playerVars: { 'loop': 1, 'playlist': VIDEO_ID, 'playsinline': 1 },
+            events: { 'onReady': () => isApiReady = true }
+        });
+    }
+
+    document.getElementById('music-toggle').onclick = function() {
+        if (!isApiReady) return;
+        if (!isPlaying) {
+            player.playVideo();
+            this.innerText = "🎵 MUSIC STOP";
+            this.style.background = "#b8977e";
+        } else {
+            player.pauseVideo();
+            this.innerText = "🎵 MUSIC START";
+            this.style.background = "#2d6a4f";
+        }
+        isPlaying = !isPlaying;
+    };
+
+    document.getElementById('pw-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkPassword();
+    });
+</script>
+</body>
+</html>
