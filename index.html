@@ -30,10 +30,10 @@
         #pw-input { width: 200px; padding: 15px; border: 1px solid var(--gold-accent); border-radius: 12px; text-align: center; margin-bottom: 15px; outline: none; font-size: 16px; }
         #start-btn { width: 200px; padding: 15px; border: none; background: var(--primary-green); color: white; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
-        /* [네비게이션 메뉴] */
+        /* [네비게이션] */
         nav { margin-bottom: 15px; z-index: 100; display: flex; gap: 20px; opacity: 0; transition: 1s; }
         nav.show { opacity: 1; }
-        nav button { background: none; border: none; font-family: 'Montserrat'; cursor: pointer; color: var(--primary-green); font-size: 0.85rem; padding: 10px; font-weight: 400; }
+        nav button { background: none; border: none; font-family: 'Montserrat'; cursor: pointer; color: var(--primary-green); font-size: 0.85rem; padding: 10px; }
 
         /* [책 구조] */
         .book { position: relative; width: 92vw; max-width: 400px; height: 70vh; perspective: 1500px; }
@@ -49,7 +49,7 @@
         .page.flipped { visibility: visible; z-index: 1; transform: rotateY(-180deg); opacity: 0; }
         .page::-webkit-scrollbar { display: none; }
 
-        /* [스토리 리스트 디자인] */
+        /* [스토리 아이템 디자인] */
         .story-container { width: 100%; display: flex; flex-direction: column; gap: 40px; padding-top: 10px; }
         .story-item { width: 100%; text-align: center; border-bottom: 1px dashed var(--gold-accent); padding-bottom: 30px; }
         .story-item:last-child { border-bottom: none; }
@@ -82,14 +82,12 @@
 <div class="book">
     <div id="p1" class="page active">
         <h2>OUR STORY</h2>
-        <div id="story-list" class="story-container">
-            </div>
+        <div id="story-list" class="story-container"></div>
     </div>
 
     <div id="p2" class="page">
         <h2>MEMORY QUIZ</h2>
-        <div id="quiz-area" style="width: 100%; margin-top: 30px; text-align: center;">
-            </div>
+        <div id="quiz-area" style="width: 100%; margin-top: 30px; text-align: center;"></div>
     </div>
 
     <div id="p3" class="page">
@@ -111,39 +109,41 @@
 
 <script>
     /* ===========================================================
-       [수정 포인트 1: 사진 & 설명 넣는 곳]
-       - img: images 폴더에 넣은 파일명
-       - desc: 사진 밑에 들어갈 멘트 (줄바꿈은 <br> 사용)
+       [수정 포인트 1: 사진 넣는 곳 (images/ 폴더 기준)]
        ===========================================================
     */
     const stories = [
-        { img: "images/1.jpg", desc: "첫 번째 추억 설명입니다." },
-        { img: "images/2.jpg", desc: "두 번째 추억 설명입니다." },
-        { img: "images/3.jpg", desc: "세 번째 추억 설명입니다." },
-        // ... 필요한 만큼 복사해서 늘리세요!
-        { img: "images/10.jpg", desc: "벌써 열 번째 추억이네. ❤️" },
+        { img: "images/1.jpg", desc: "첫 번째 사진 설명입니다.<br>설명을 여기에 적으세요." },
+        { img: "images/2.jpg", desc: "두 번째 사진 설명입니다." },
+        { img: "images/3.jpg", desc: "세 번째 사진 설명..." },
+        { img: "images/4.jpg", desc: "네 번째 사진 설명..." },
+        { img: "images/5.jpg", desc: "다섯 번째 사진 설명..." },
+        { img: "images/6.jpg", desc: "여섯 번째 사진 설명..." },
+        { img: "images/7.jpg", desc: "일곱 번째 사진 설명..." },
+        { img: "images/8.jpg", desc: "여덟 번째 사진 설명..." },
+        { img: "images/9.jpg", desc: "아홉 번째 사진 설명..." },
+        { img: "images/10.jpg", desc: "열 번째 사진 설명. ❤️" },
     ];
 
     /* ===========================================================
-       [수정 포인트 2: 퀴즈 3개 수정하는 곳]
-       - q: 질문 / options: 보기 3개 / answer: 정답 번호 (0부터 시작)
+       [수정 포인트 2: 퀴즈 수정하는 곳]
        ===========================================================
     */
     const quizzes = [
-        { q: "우리가 처음 만난 날은?", options: ["3월 24일", "4월 1일", "5월 5일"], answer: 0 },
-        { q: "우리가 가장 자주 먹는 음식은?", options: ["피자", "국밥", "떡볶이"], answer: 2 },
-        { q: "내 생일은?", options: ["1월 1일", "2월 2일", "3월 3일"], answer: 0 }
+        { q: "우리가 처음 만난 장소는?", options: ["수원역", "강남역", "홍대입구"], answer: 0 },
+        { q: "우리가 처음 같이 먹은 음식은?", options: ["치킨", "파스타", "떡볶이"], answer: 2 },
+        { q: "내 생일은?", options: ["1월 1일", "3월 24일", "12월 25일"], answer: 1 }
     ];
 
-    /* [비밀번호 및 배경음악 설정] */
-    const CORRECT_PW = "0325"; 
-    const VIDEO_ID = 'qMkQ3lAD418'; // 권진아 - 위로 영상 ID
+    /* [비밀번호 및 음악 설정] */
+    const CORRECT_PW = "0325"; // 비밀번호
+    const VIDEO_ID = 'qMkQ3lAD418'; // 권진아 - 위로
 
     let currentId = 'p1';
     let currentQuizIdx = 0;
     let flipSound = new Audio("flip.mp3");
 
-    // 스토리 리스트 생성 함수
+    // 스토리 리스트 생성
     function renderStories() {
         const container = document.getElementById('story-list');
         stories.forEach(item => {
@@ -151,12 +151,11 @@
                 <div class="story-item">
                     <img src="${item.img}" class="story-img" loading="lazy">
                     <p class="story-desc">${item.desc}</p>
-                </div>
-            `;
+                </div>`;
         });
     }
 
-    // 퀴즈 렌더링 함수
+    // 퀴즈 생성
     function renderQuiz() {
         const quizArea = document.getElementById('quiz-area');
         const qData = quizzes[currentQuizIdx];
@@ -166,38 +165,28 @@
 
         quizArea.innerHTML = `
             <p class="story-desc" style="font-weight:700; color:var(--primary-green); margin-bottom:30px;">Q${currentQuizIdx+1}. ${qData.q}</p>
-            ${optionsHtml}
-        `;
+            ${optionsHtml}`;
     }
 
-    /* ===========================================================
-       [수정 포인트 3: 퀴즈 완료 후 편지로 넘어가는 로직]
-       ===========================================================
-    */
+    // 정답 체크 및 자동 이동
     function checkAnswer(idx) {
         if (idx === quizzes[currentQuizIdx].answer) {
             currentQuizIdx++;
             if (currentQuizIdx < quizzes.length) {
-                alert("정답! 다음 문제로 갈게. ❤️");
+                alert("정답이야! 다음 문제로 갈게. ❤️");
                 renderQuiz();
             } else {
-                // [하이라이트] 모든 퀴즈 통과 시
-                alert("축하해! 모든 퀴즈를 맞혔어. ✨\n마지막으로 내가 쓴 편지를 읽어줘!");
-                
-                // 1. 편지 메뉴 활성화
+                alert("축하해! 모든 퀴즈를 맞혔어. ✨\n이제 내가 쓴 편지를 읽어줘!");
                 const navLetter = document.getElementById('nav-letter');
                 navLetter.style.opacity = "1";
                 navLetter.style.pointerEvents = "auto";
-
-                // 2. 자동으로 편지 페이지로 이동
-                flipPage('p3');
+                flipPage('p3'); // 마지막 문제 맞히면 편지로 자동 이동
             }
         } else {
-            alert("이걸 틀리다니.. 다시 한번 생각해봐! 🥺");
+            alert("틀렸어! 다시 한번 생각해봐 🥺");
         }
     }
 
-    // 잠금 해제 함수
     function checkPassword() {
         if (document.getElementById('pw-input').value === CORRECT_PW) {
             document.getElementById('lock-screen').style.opacity = "0";
@@ -213,7 +202,6 @@
         }
     }
 
-    // 페이지 전환 함수
     function flipPage(targetId) {
         if (currentId === targetId) return;
         if (targetId === 'p3' && currentQuizIdx < quizzes.length) {
@@ -232,7 +220,7 @@
         currentId = targetId;
     }
 
-    // 유튜브 API 설정 (권진아 - 위로)
+    // 유튜브 API
     let player, isApiReady = false, isPlaying = false;
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
