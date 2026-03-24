@@ -6,10 +6,6 @@
     <title>Our Special Record</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&family=Noto+Serif+KR:wght@200;400;700&display=swap" rel="stylesheet">
     <style>
-        /* [수정 포인트: 테마 색상] 
-           --primary-green: 메인 포인트 컬러 (버튼, 제목선 등)
-           --soft-beige: 페이지 배경색 (따뜻한 느낌)
-        */
         :root {
             --primary-green: #2d6a4f;
             --soft-beige: #f4f1ea;
@@ -25,7 +21,7 @@
             height: 100vh; width: 100vw; overflow: hidden; position: fixed;
         }
 
-        /* 잠금 화면 */
+        /* [잠금 화면] */
         #lock-screen {
             position: fixed; inset: 0; background: var(--soft-beige); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -34,12 +30,12 @@
         #pw-input { width: 200px; padding: 15px; border: 1px solid var(--gold-accent); border-radius: 12px; text-align: center; margin-bottom: 15px; outline: none; font-size: 16px; }
         #start-btn { width: 200px; padding: 15px; border: none; background: var(--primary-green); color: white; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
-        /* 네비게이션 */
+        /* [네비게이션 메뉴] */
         nav { margin-bottom: 15px; z-index: 100; display: flex; gap: 20px; opacity: 0; transition: 1s; }
         nav.show { opacity: 1; }
         nav button { background: none; border: none; font-family: 'Montserrat'; cursor: pointer; color: var(--primary-green); font-size: 0.85rem; padding: 10px; font-weight: 400; }
 
-        /* 책 구조 */
+        /* [책 구조] */
         .book { position: relative; width: 92vw; max-width: 400px; height: 70vh; perspective: 1500px; }
         .page {
             position: absolute; width: 100%; height: 100%; top: 0; left: 0;
@@ -51,9 +47,9 @@
         }
         .page.active { visibility: visible; z-index: 10; transform: rotateY(0deg); opacity: 1; }
         .page.flipped { visibility: visible; z-index: 1; transform: rotateY(-180deg); opacity: 0; }
-        .page::-webkit-scrollbar { display: none; } /* 스크롤바 숨김 */
+        .page::-webkit-scrollbar { display: none; }
 
-        /* 스토리 아이템 스타일 */
+        /* [스토리 리스트 디자인] */
         .story-container { width: 100%; display: flex; flex-direction: column; gap: 40px; padding-top: 10px; }
         .story-item { width: 100%; text-align: center; border-bottom: 1px dashed var(--gold-accent); padding-bottom: 30px; }
         .story-item:last-child { border-bottom: none; }
@@ -69,7 +65,7 @@
 
 <div id="lock-screen">
     <div style="text-align: center;">
-        <p style="color: var(--primary-green); font-weight: 700; margin-bottom: 20px;">비밀번호를 입력해주세요./p>
+        <p style="color: var(--primary-green); font-weight: 700; margin-bottom: 20px;">비밀번호를 입력해주세요.</p>
         <input type="number" id="pw-input" placeholder="0000" inputmode="numeric">
         <button id="start-btn" onclick="checkPassword()">기록 열어보기</button>
     </div>
@@ -103,8 +99,7 @@
             
             <p class="story-desc" style="margin-top: 30px;">
                 여기에 정성스러운 편지 내용을 적어주세요.<br>
-                사진 수십 장과 퀴즈를 모두 통과한<br>
-                여자친구에게 전하는 마지막 진심입니다. ❤️
+                모든 퀴즈를 통과한 당신에게 전하는 진심입니다. ❤️
             </p>
 
             <p style="margin-top:50px; font-weight: bold; color: var(--primary-green);">2026. 03. 24 <br> 너의 남자친구가</p>
@@ -116,64 +111,39 @@
 
 <script>
     /* ===========================================================
-       [수정 포인트 1: 스토리 (사진 & 설명)]
-       - img: images 폴더에 넣은 사진 파일명 (확장자 주의!)
-       - desc: 사진 아래에 들어갈 설명 (줄바꿈은 <br> 사용)
-       - 사진을 10장, 20장 원하는 만큼 { } 묶음을 복사해서 늘리세요.
+       [수정 포인트 1: 사진 & 설명 넣는 곳]
+       - img: images 폴더에 넣은 파일명
+       - desc: 사진 밑에 들어갈 멘트 (줄바꿈은 <br> 사용)
        ===========================================================
     */
     const stories = [
-        { img: "images/1.jpg", desc: "첫 번째 사진 설명입니다.<br>이때 정말 즐거웠지!" },
-        { img: "images/2.jpg", desc: "두 번째 사진 설명입니다.<br>너랑 먹은 음식이 제일 맛있어." },
-        { img: "images/3.jpg", desc: "세 번째 사진 설명입니다.<br>날씨가 참 좋았던 날." },
-        { img: "images/4.jpg", desc: "네 번째 사진 설명..." },
-        { img: "images/5.jpg", desc: "다섯 번째 사진 설명..." },
-        { img: "images/6.jpg", desc: "여섯 번째 사진 설명..." },
-        { img: "images/7.jpg", desc: "일곱 번째 사진 설명..." },
-        { img: "images/8.jpg", desc: "여덟 번째 사진 설명..." },
-        { img: "images/9.jpg", desc: "아홉 번째 사진 설명..." },
-        { img: "images/10.jpg", desc: "열 번째 사진 설명. ❤️" },
+        { img: "images/1.jpg", desc: "첫 번째 추억 설명입니다." },
+        { img: "images/2.jpg", desc: "두 번째 추억 설명입니다." },
+        { img: "images/3.jpg", desc: "세 번째 추억 설명입니다." },
+        // ... 필요한 만큼 복사해서 늘리세요!
+        { img: "images/10.jpg", desc: "벌써 열 번째 추억이네. ❤️" },
     ];
 
     /* ===========================================================
-       [수정 포인트 2: 퀴즈 (3문제)]
-       - q: 질문 내용
-       - options: 보기 3개
-       - answer: 정답 인덱스 (0, 1, 2 중 하나. 첫 번째가 0번임)
+       [수정 포인트 2: 퀴즈 3개 수정하는 곳]
+       - q: 질문 / options: 보기 3개 / answer: 정답 번호 (0부터 시작)
        ===========================================================
     */
     const quizzes = [
-        { 
-            q: "우리가 처음 만난 장소는 어디일까요?", 
-            options: ["수원역", "강남역", "홍대입구"], 
-            answer: 0 // 수원역이 정답일 경우
-        },
-        { 
-            q: "우리가 사귀기 시작한 날짜는?", 
-            options: ["3월 24일", "4월 1일", "5월 5일"], 
-            answer: 0 
-        },
-        { 
-            q: "내가 가장 좋아하는 너의 모습은?", 
-            options: ["웃는 모습", "먹는 모습", "전부 다"], 
-            answer: 2 
-        }
+        { q: "우리가 처음 만난 날은?", options: ["3월 24일", "4월 1일", "5월 5일"], answer: 0 },
+        { q: "우리가 가장 자주 먹는 음식은?", options: ["피자", "국밥", "떡볶이"], answer: 2 },
+        { q: "내 생일은?", options: ["1월 1일", "2월 2일", "3월 3일"], answer: 0 }
     ];
 
-    /* [수정 포인트 3: 비밀번호] */
+    /* [비밀번호 및 배경음악 설정] */
     const CORRECT_PW = "0325"; 
+    const VIDEO_ID = 'qMkQ3lAD418'; // 권진아 - 위로 영상 ID
 
-    /* [수정 포인트 4: 유튜브 배경음악 ID] 
-       유튜브 주소창 v= 뒤의 문자열만 넣으세요.
-    */
-    const VIDEO_ID = 'qMkQ3lAD418'; 
-
-    // --- 이하 로직 (가급적 수정하지 마세요) ---
     let currentId = 'p1';
     let currentQuizIdx = 0;
-    let flipSound = new Audio("flip.mp3"); // GitHub에 flip.mp3를 꼭 올리세요!
-    flipSound.preload = "auto";
+    let flipSound = new Audio("flip.mp3");
 
+    // 스토리 리스트 생성 함수
     function renderStories() {
         const container = document.getElementById('story-list');
         stories.forEach(item => {
@@ -186,6 +156,7 @@
         });
     }
 
+    // 퀴즈 렌더링 함수
     function renderQuiz() {
         const quizArea = document.getElementById('quiz-area');
         const qData = quizzes[currentQuizIdx];
@@ -199,47 +170,54 @@
         `;
     }
 
+    /* ===========================================================
+       [수정 포인트 3: 퀴즈 완료 후 편지로 넘어가는 로직]
+       ===========================================================
+    */
     function checkAnswer(idx) {
         if (idx === quizzes[currentQuizIdx].answer) {
             currentQuizIdx++;
             if (currentQuizIdx < quizzes.length) {
-                alert("정답!");
+                alert("정답! 다음 문제로 갈게. ❤️");
                 renderQuiz();
             } else {
-                alert("통과!");
-                document.getElementById('nav-letter').style.opacity = "1";
-                document.getElementById('nav-letter').style.pointerEvents = "auto";
+                // [하이라이트] 모든 퀴즈 통과 시
+                alert("축하해! 모든 퀴즈를 맞혔어. ✨\n마지막으로 내가 쓴 편지를 읽어줘!");
+                
+                // 1. 편지 메뉴 활성화
+                const navLetter = document.getElementById('nav-letter');
+                navLetter.style.opacity = "1";
+                navLetter.style.pointerEvents = "auto";
+
+                // 2. 자동으로 편지 페이지로 이동
                 flipPage('p3');
             }
         } else {
-            alert("이걸 틀리다니..");
+            alert("이걸 틀리다니.. 다시 한번 생각해봐! 🥺");
         }
     }
 
+    // 잠금 해제 함수
     function checkPassword() {
         if (document.getElementById('pw-input').value === CORRECT_PW) {
-            unlock();
+            document.getElementById('lock-screen').style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById('lock-screen').style.display = "none";
+                document.getElementById('main-nav').classList.add('show');
+                document.getElementById('music-toggle').style.display = "block";
+            }, 800);
+            flipSound.play().then(()=> {flipSound.pause(); flipSound.currentTime=0;});
         } else {
-            alert("비밀번호가 틀립니다.(힌트는 우리가 만난 날)");
+            alert("비밀번호가 틀립니다! (힌트: 우리가 만난 날)");
             document.getElementById('pw-input').value = "";
         }
     }
 
-    function unlock() {
-        const lock = document.getElementById('lock-screen');
-        lock.style.opacity = "0";
-        setTimeout(() => {
-            lock.style.display = "none";
-            document.getElementById('main-nav').classList.add('show');
-            document.getElementById('music-toggle').style.display = "block";
-        }, 800);
-        flipSound.play().then(()=> {flipSound.pause(); flipSound.currentTime=0;});
-    }
-
+    // 페이지 전환 함수
     function flipPage(targetId) {
         if (currentId === targetId) return;
         if (targetId === 'p3' && currentQuizIdx < quizzes.length) {
-            alert("퀴즈를 풀어야 읽을 수 있습니다.");
+            alert("퀴즈를 모두 풀어야 편지를 볼 수 있어! 😉");
             return;
         }
         try { flipSound.currentTime = 0; flipSound.play(); } catch(e) {}
@@ -254,7 +232,7 @@
         currentId = targetId;
     }
 
-    // 유튜브 API 설정
+    // 유튜브 API 설정 (권진아 - 위로)
     let player, isApiReady = false, isPlaying = false;
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -266,6 +244,7 @@
             events: { 'onReady': () => isApiReady = true }
         });
     }
+
     document.getElementById('music-toggle').onclick = function() {
         if (!isApiReady) return;
         if (!isPlaying) { player.playVideo(); this.innerText = "🎵 MUSIC STOP"; }
