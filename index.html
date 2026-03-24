@@ -21,7 +21,7 @@
             height: 100vh; width: 100vw; overflow: hidden; position: fixed;
         }
 
-        /* [잠금 화면] */
+        /* 잠금 화면 */
         #lock-screen {
             position: fixed; inset: 0; background: var(--soft-beige); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -30,12 +30,12 @@
         #pw-input { width: 200px; padding: 15px; border: 1px solid var(--gold-accent); border-radius: 12px; text-align: center; margin-bottom: 15px; outline: none; font-size: 16px; }
         #start-btn { width: 200px; padding: 15px; border: none; background: var(--primary-green); color: white; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
-        /* [네비게이션] */
+        /* 네비게이션 */
         nav { margin-bottom: 15px; z-index: 100; display: flex; gap: 20px; opacity: 0; transition: 1s; }
         nav.show { opacity: 1; }
         nav button { background: none; border: none; font-family: 'Montserrat'; cursor: pointer; color: var(--primary-green); font-size: 0.85rem; padding: 10px; }
 
-        /* [책 구조] */
+        /* 책 구조 */
         .book { position: relative; width: 92vw; max-width: 400px; height: 70vh; perspective: 1500px; }
         .page {
             position: absolute; width: 100%; height: 100%; top: 0; left: 0;
@@ -49,10 +49,8 @@
         .page.flipped { visibility: visible; z-index: 1; transform: rotateY(-180deg); opacity: 0; }
         .page::-webkit-scrollbar { display: none; }
 
-        /* [스토리 아이템 디자인] */
         .story-container { width: 100%; display: flex; flex-direction: column; gap: 40px; padding-top: 10px; }
         .story-item { width: 100%; text-align: center; border-bottom: 1px dashed var(--gold-accent); padding-bottom: 30px; }
-        .story-item:last-child { border-bottom: none; }
         .story-img { width: 100%; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
         .story-desc { font-size: 0.92rem; line-height: 1.8; color: var(--text-gray); word-break: keep-all; }
 
@@ -93,14 +91,15 @@
     <div id="p3" class="page">
         <h2>DEAR YOU</h2>
         <div style="margin: auto 0; text-align: center; width: 100%;">
-            <p class="story-desc" style="font-size: 1.1rem; font-style: italic; color: var(--primary-green);">"우리의 다음 페이지도 함께하자"</p>
-            
+            <p class="story-desc" style="font-size: 1.1rem; font-style: italic; color: var(--primary-green);">"우리의 다음 페이지도 함께 하자"</p>
             <p class="story-desc" style="margin-top: 30px;">
-                여기에 정성스러운 편지 내용을 적어주세요.<br>
-                모든 퀴즈를 통과한 당신에게 전하는 진심입니다. ❤️
+                예림아 어때? 내가 한 번 전공을 살려서 1주년을 기념해 한 번 만들어봤어.
+                사실 처음에는 그냥 사진첩으로 만들려고 했는데, 뭔가 좀 더 특별하게 만들고 싶어서 이렇게 웹페이지로 만들어봤어.
+                너랑 함께한 순간들이 너무 소중해서 만들어봤어. 앞으로도 더 많은 행복한 순간들 만들어서 이렇게 남길 수 있으면 정말 좋겠어!
+                예림아 앞으로도 정말 추억 많이 많이 쌓아보자! 
+                예림아 사랑해
             </p>
-
-            <p style="margin-top:50px; font-weight: bold; color: var(--primary-green);">2026. 03. 24 <br> 너의 남자친구가</p>
+            <p style="margin-top:50px; font-weight: bold; color: var(--primary-green);">2026. 03. 24 <br> 성호가</p>
         </div>
     </div>
 </div>
@@ -108,54 +107,56 @@
 <button id="music-toggle">🎵 MUSIC START</button>
 
 <script>
-    /* ===========================================================
-       [수정 포인트 1: 사진 넣는 곳 (images/ 폴더 기준)]
-       ===========================================================
+    /* [경로 최종 수정] 
+       이미지 폴더명이 'images'이므로 모든 경로 앞에 ./images/ 를 붙였습니다.
     */
     const stories = [
-        { img: "images/1.jpg", desc: "첫 번째 사진 설명입니다.<br>설명을 여기에 적으세요." },
-        { img: "images/2.jpg", desc: "두 번째 사진 설명입니다." },
-        { img: "images/3.jpg", desc: "세 번째 사진 설명..." },
-        { img: "images/4.jpg", desc: "네 번째 사진 설명..." },
-        { img: "images/5.jpg", desc: "다섯 번째 사진 설명..." },
-        { img: "images/6.jpg", desc: "여섯 번째 사진 설명..." },
-        { img: "images/7.jpg", desc: "일곱 번째 사진 설명..." },
-        { img: "images/8.jpg", desc: "여덟 번째 사진 설명..." },
-        { img: "images/9.jpg", desc: "아홉 번째 사진 설명..." },
-        { img: "images/10.jpg", desc: "열 번째 사진 설명. ❤️" },
+        { img: "./images/1.jpeg", desc: "우리 첫번째로 제대로 된 데이트 했던 날 기억 나? \n 아직도 저 시절 머리가 가장 예쁘다고 하는 예림이가 생각납니다.\n 우리 정말 풋풋해 보이지 않아?\n" },
+        { img: "./images/2.jpeg", desc: "우리가 벚꽃 시즌 막바지에 우리 꼭 벚꽃 같이 봐야 한다면서,\n 교회 끝나고 나랑 만나서 벚꽃 구경했을 때...\n 그때 고양인가 강아진가 있었던 거 같은데 맞지?\n 이 사진들 보고 누가봐도 예림이라고 다들 생각하더라고요." },
+        { img: "./images/3.jpeg", desc: "나 예비군 갔다와서 뭔가 군복입고 예림이랑 같이 사진 찍고 싶어졌어...\n 저 때 우리 정통집에서 배부르게 먹고 집 앞에서 찍은 날이야~\n 재밌었는데ㅠ" },
+        { img: "./images/4.jpeg", desc: "우리가 처음으로 서울 가서 찍은 날!!\n 저기가 예림이 사진 찍느라 좀 쩔쩔맸던 게 기억이 나네^^\n문래 갔다가 성수 갔다가 한강으로 갔었지~~\n 저 날 예림이네 집앞에서 첫뽀뽀 받고 머리 하얘졌는데 ㅎㅋ" },
+        { img: "./images/5.jpeg", desc: "이 사진 홍라드에서 찍은 사진인데,\n 예림이가 이거 인화해서 공기계 케이스 뒤에 둬서 뿌듯했던 기억이~" },
+        { img: "./images/6.jpeg", desc: "우리 혜화 갔던 날! \n 연극 보고 카페 갔었을 때 재밌었는데!!" },
+        { img: "./images/7.jpeg", desc: "우리 100일 기념으로 첫 연남동 갔던 날인데,\n 아마 저 카페에서 나 막 사진 엄청 찍어줬던 걸로 기억해\n 그리고 저 때 서울에서 수원 오면서 권육회도 갔었는데~~" },
+        { img: "./images/8.jpeg", desc: "우리 처음으로 수도권 벗어나 대전 간 날~\n 대전 가서 성심당도 뿌수고 카페도 부수고 다 부수고 뭔가 하루가 엄청 빠르게 흘러 간 느낌.." },
+        { img: "./images/9.jpeg", desc: "우리 처음으로 1박2일로 부산 여행 갔던 날~\n 저때 바닷가라 바람 진짜 많이 불었는데\n 아직도 그 밀면인가 그거 아직도 생각나!\n 저때 모든 게 다 기억나.. \n예림이가 돈 없어서 궁핍했던 시절.." },
+        { img: "./images/10.jpeg", desc: "우리의 첫 커플템입고 바닷가에서 사진 한 컷!\n 덥기도 했지만, 바람도 엄청 불었어 ㅋㅋㅋ..\n저때까지만 해도 괜찮았는데.. 지금은 살이 불었다.." },
+        { img: "./images/11.jpeg", desc: "내가 처음으로 차 렌트해서 예림이랑 춘천으로 글램핑 갔던 날!\n 저때 진짜 감성 가득했는데.. 정말 날씨도 너무 좋았지만,\n 차가 엄청 막혀서 고생했다는 기억도 나네^^" },
+        { img: "./images/12.jpeg", desc: "우리 같이 더블데이트로 에버랜드 갔을 때야~\n 나 저때 무서워서 티익스프레스는 당연 못타고,\n 후룸라이든가 그거 타다 죽을뻔.." },
+        { img: "./images/13.jpeg", desc: "나 처음으로 아빠 차 끌고 오랜만에 기분 내러\n 용인 카페 갔다가, 광교산 뒤에 있는 곳에서 저녁 먹고 \n 화성행궁가서 산책했던 날~" },
+        { img: "./images/14.jpeg", desc: "우리 크리스마스 때 각자 교회 끝나고 예림이랑 서울 놀러 갔을 때~\n 내가 그때 늦어가지고 예림이네 교회 데리러 간다고 약속했다가,\n 못지켜서 예림이 짜증났을 때." },
+        { img: "./images/15.jpeg", desc: "예림이 생일 날 행궁동으로 데이트 간 날~\n 저때 목걸이 선물 너무나도 성공적!!\n 저때도 살집이 있었네... 아 물론 나..." },
+        { img: "./images/16.jpeg", desc: "우리 일본 교토 갔었을 때 사진 스팟에서 찍은 사진!!\n 다행히 오후 시간대인데 사람도 그렇게 많지 않아서\n 사진 엄청 찍어서 너무 좋아!!" },
+        { img: "./images/17.jpeg", desc: "이건 오사카 도톤보리에서 찍은 사진~~\n 다시봐도 2박 3일은 너무 짧아.. \n 그때로 돌려줘ㅠㅠ" },
+        { img: "./images/18.jpeg", desc: "이건 얼마 전에 예림이랑 같이 1주년 기념으로 잠실 가서 찍은 사진!\n 살이 부쩍 올랐네요.. 그만큼 행복하다는 거지!" },
     ];
 
-    /* ===========================================================
-       [수정 포인트 2: 퀴즈 수정하는 곳]
-       ===========================================================
-    */
     const quizzes = [
-        { q: "우리가 처음 만난 장소는?", options: ["수원역", "강남역", "홍대입구"], answer: 0 },
-        { q: "우리가 처음 같이 먹은 음식은?", options: ["치킨", "파스타", "떡볶이"], answer: 2 },
-        { q: "내 생일은?", options: ["1월 1일", "3월 24일", "12월 25일"], answer: 1 }
+        { q: "우리가 처음 간 서울 장소는?", options: ["문래", "강남", "잠실", "서촌", "강북"], answer: 0 },
+        { q: "현재 내 몸무게는?", options: ["76", "77", "78", "79", "80"], answer: 2},
+        { q: "내 핸드폰 뒷자리는?", options: ["1215", "1917", "3896", "3857", "9497"], answer: 3}
     ];
 
-    /* [비밀번호 및 음악 설정] */
-    const CORRECT_PW = "0325"; // 비밀번호
+    const CORRECT_PW = "0325"; 
     const VIDEO_ID = 'qMkQ3lAD418'; // 권진아 - 위로
 
     let currentId = 'p1';
     let currentQuizIdx = 0;
     let flipSound = new Audio("flip.mp3");
 
-    // 스토리 리스트 생성
     function renderStories() {
         const container = document.getElementById('story-list');
         stories.forEach(item => {
+            // [디버깅 로그 추가] 실제 어떤 경로를 읽는지 콘솔에 찍습니다.
+            console.log("이미지 로딩 시도:", item.img);
             container.innerHTML += `
                 <div class="story-item">
-                    <img src="${item.img}" class="story-img" loading="lazy">
+                    <img src="${item.img}" class="story-img" loading="lazy" onerror="console.error('이미지 로드 실패:', this.src)">
                     <p class="story-desc">${item.desc}</p>
                 </div>`;
         });
     }
 
-    // 퀴즈 생성
     function renderQuiz() {
         const quizArea = document.getElementById('quiz-area');
         const qData = quizzes[currentQuizIdx];
@@ -168,22 +169,20 @@
             ${optionsHtml}`;
     }
 
-    // 정답 체크 및 자동 이동
     function checkAnswer(idx) {
         if (idx === quizzes[currentQuizIdx].answer) {
             currentQuizIdx++;
             if (currentQuizIdx < quizzes.length) {
-                alert("정답이야! 다음 문제로 갈게. ❤️");
+                alert("정답");
                 renderQuiz();
             } else {
-                alert("축하해! 모든 퀴즈를 맞혔어. ✨\n이제 내가 쓴 편지를 읽어줘!");
-                const navLetter = document.getElementById('nav-letter');
-                navLetter.style.opacity = "1";
-                navLetter.style.pointerEvents = "auto";
-                flipPage('p3'); // 마지막 문제 맞히면 편지로 자동 이동
+                alert("다 맞추셨네요!");
+                document.getElementById('nav-letter').style.opacity = "1";
+                document.getElementById('nav-letter').style.pointerEvents = "auto";
+                flipPage('p3');
             }
         } else {
-            alert("틀렸어! 다시 한번 생각해봐 🥺");
+            alert("이걸 틀리다니..");
         }
     }
 
@@ -195,9 +194,9 @@
                 document.getElementById('main-nav').classList.add('show');
                 document.getElementById('music-toggle').style.display = "block";
             }, 800);
-            flipSound.play().then(()=> {flipSound.pause(); flipSound.currentTime=0;});
+            flipSound.play().catch(e => console.log("Sound ready"));
         } else {
-            alert("비밀번호가 틀립니다! (힌트: 우리가 만난 날)");
+            alert("비밀번호가 틀립니다.");
             document.getElementById('pw-input').value = "";
         }
     }
@@ -205,7 +204,7 @@
     function flipPage(targetId) {
         if (currentId === targetId) return;
         if (targetId === 'p3' && currentQuizIdx < quizzes.length) {
-            alert("퀴즈를 모두 풀어야 편지를 볼 수 있어! 😉");
+            alert("퀴즈를 먼저 풀어줘..");
             return;
         }
         try { flipSound.currentTime = 0; flipSound.play(); } catch(e) {}
@@ -220,7 +219,6 @@
         currentId = targetId;
     }
 
-    // 유튜브 API
     let player, isApiReady = false, isPlaying = false;
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -236,7 +234,7 @@
     document.getElementById('music-toggle').onclick = function() {
         if (!isApiReady) return;
         if (!isPlaying) { player.playVideo(); this.innerText = "🎵 MUSIC STOP"; }
-        else { player.pauseVideo(); this.innerText = "🎵 MUSIC START"; }
+        else { player.pauseVideo(); this.innerTex2t = "🎵 MUSIC START"; }
         isPlaying = !isPlaying;
     };
 
