@@ -6,12 +6,15 @@
     <title>Our Special Record</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&family=Noto+Serif+KR:wght@200;400;700&display=swap" rel="stylesheet">
     <style>
-        /* [수정 포인트: 색상] 기본 테마 색상 */
+        /* [수정 포인트: 테마 색상] 
+           --primary-green: 메인 포인트 컬러 (버튼, 제목선 등)
+           --soft-beige: 페이지 배경색 (따뜻한 느낌)
+        */
         :root {
-            --primary-green: #2d6a4f;  /* 버튼, 제목 등 포인트 색 */
-            --soft-beige: #f4f1ea;     /* 배경색 */
-            --gold-accent: #b8977e;    /* 선, 테두리 */
-            --error-red: #d63031;      /* 오답 알림 */
+            --primary-green: #2d6a4f;
+            --soft-beige: #f4f1ea;
+            --gold-accent: #b8977e;
+            --text-gray: #555;
             --transition: 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
 
@@ -22,111 +25,89 @@
             height: 100vh; width: 100vw; overflow: hidden; position: fixed;
         }
 
-        /* --- 잠금 화면 스타일 --- */
+        /* 잠금 화면 */
         #lock-screen {
             position: fixed; inset: 0; background: var(--soft-beige); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.8s ease;
         }
-        .lock-box { text-align: center; width: 80%; max-width: 280px; }
-        #pw-input {
-            width: 100%; padding: 15px; border: 1px solid var(--gold-accent); border-radius: 12px;
-            text-align: center; font-size: 16px; margin-bottom: 15px; outline: none;
-        }
-        #start-btn {
-            width: 100%; padding: 15px; border: none; background: var(--primary-green);
-            color: white; font-size: 1rem; border-radius: 12px; cursor: pointer; font-weight: bold;
-        }
+        #pw-input { width: 200px; padding: 15px; border: 1px solid var(--gold-accent); border-radius: 12px; text-align: center; margin-bottom: 15px; outline: none; font-size: 16px; }
+        #start-btn { width: 200px; padding: 15px; border: none; background: var(--primary-green); color: white; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
-        /* --- 상단 메뉴 --- */
-        nav { margin-bottom: 20px; z-index: 100; display: flex; gap: 25px; opacity: 0; transition: 1s; }
+        /* 네비게이션 */
+        nav { margin-bottom: 15px; z-index: 100; display: flex; gap: 20px; opacity: 0; transition: 1s; }
         nav.show { opacity: 1; }
-        nav button { background: none; border: none; font-family: 'Montserrat'; cursor: pointer; color: var(--primary-green); font-size: 0.9rem; padding: 10px; }
+        nav button { background: none; border: none; font-family: 'Montserrat'; cursor: pointer; color: var(--primary-green); font-size: 0.85rem; padding: 10px; font-weight: 400; }
 
-        /* --- 책 디자인 --- */
-        .book { position: relative; width: 90vw; max-width: 380px; height: 65vh; perspective: 1500px; }
+        /* 책 구조 */
+        .book { position: relative; width: 92vw; max-width: 400px; height: 70vh; perspective: 1500px; }
         .page {
             position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-            background: var(--soft-beige); padding: 30px; border-radius: 4px 15px 15px 4px;
+            background: var(--soft-beige); padding: 25px; border-radius: 4px 15px 15px 4px;
             box-shadow: inset 3px 0 10px rgba(0,0,0,0.1), 8px 8px 20px rgba(0,0,0,0.08);
             transform-origin: left center; transition: var(--transition);
             visibility: hidden; display: flex; flex-direction: column; align-items: center;
-            overflow-y: auto;
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
         }
         .page.active { visibility: visible; z-index: 10; transform: rotateY(0deg); opacity: 1; }
         .page.flipped { visibility: visible; z-index: 1; transform: rotateY(-180deg); opacity: 0; }
+        .page::-webkit-scrollbar { display: none; } /* 스크롤바 숨김 */
 
-        /* 이미지 프레임 */
-        .img-frame { width: 100%; min-height: 220px; background: #eee; margin: 15px 0; overflow: hidden; border-radius: 8px; }
-        .img-frame img { width: 100%; height: 100%; object-fit: cover; }
-        
-        h2 { font-family: 'Montserrat'; font-size: 1.1rem; color: var(--primary-green); border-bottom: 2px solid var(--gold-accent); padding-bottom: 5px; margin-top: 0; }
-        .page-text { font-size: 0.95rem; line-height: 1.8; text-align: center; color: #333; word-break: keep-all; }
+        /* 스토리 아이템 스타일 */
+        .story-container { width: 100%; display: flex; flex-direction: column; gap: 40px; padding-top: 10px; }
+        .story-item { width: 100%; text-align: center; border-bottom: 1px dashed var(--gold-accent); padding-bottom: 30px; }
+        .story-item:last-child { border-bottom: none; }
+        .story-img { width: 100%; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .story-desc { font-size: 0.92rem; line-height: 1.8; color: var(--text-gray); word-break: keep-all; }
 
-        /* 퀴즈 버튼 */
-        .quiz-option {
-            width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--gold-accent);
-            background: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; transition: 0.3s;
-        }
-
-        /* 하단 음악 조절 */
-        #music-toggle { position: fixed; bottom: 30px; right: 20px; padding: 12px 20px; border-radius: 30px; background: var(--primary-green); color: white; border: none; display: none; z-index: 1000; font-size: 0.8rem; font-weight: bold; }
-        #yt-player { position: absolute; top: -9999px; left: -9999px; }
-
-        .shake { animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        h2 { font-family: 'Montserrat'; font-size: 1.1rem; color: var(--primary-green); border-bottom: 2px solid var(--gold-accent); padding-bottom: 5px; margin-bottom: 20px; letter-spacing: 2px; }
+        #music-toggle { position: fixed; bottom: 25px; right: 20px; padding: 12px 18px; border-radius: 30px; background: var(--primary-green); color: white; border: none; display: none; z-index: 1000; font-size: 0.75rem; font-weight: bold; }
+        #yt-player { position: absolute; top: -9999px; }
     </style>
 </head>
 <body>
 
 <div id="lock-screen">
-    <div class="lock-box" id="lock-content">
-        <p style="color: var(--primary-green); font-weight: 700; margin-bottom: 25px;">비밀번호를 입력해줘 ❤️</p>
+    <div style="text-align: center;">
+        <p style="color: var(--primary-green); font-weight: 700; margin-bottom: 20px;">비밀번호를 입력해주세요./p>
         <input type="number" id="pw-input" placeholder="0000" inputmode="numeric">
         <button id="start-btn" onclick="checkPassword()">기록 열어보기</button>
-        <p id="error-msg" style="color: var(--error-red); font-size: 0.85rem; margin-top: 12px; display: none;">다시 한번 생각해봐! 🥺</p>
     </div>
 </div>
 
 <div id="yt-player"></div>
 
 <nav id="main-nav">
-    <button onclick="flipPage('p1')">Story</button>
-    <button onclick="flipPage('p2')">Quiz</button>
-    <button id="nav-letter" onclick="flipPage('p3')" style="opacity: 0.3; pointer-events: none;">Letter</button>
+    <button onclick="flipPage('p1')">STORY</button>
+    <button onclick="flipPage('p2')">QUIZ</button>
+    <button id="nav-letter" onclick="flipPage('p3')" style="opacity: 0.3; pointer-events: none;">LETTER</button>
 </nav>
 
 <div class="book">
-    
     <div id="p1" class="page active">
-        <h2>THE STORY</h2>
-        <div class="img-frame">
-            <img src="images/mainimage.gif" alt="메인 이미지">
-        </div>
-        <p class="page-text">2025. 03. 24.<br>우리가 처음 만난 그 날부터 시작된<br>세상에 하나뿐인 우리의 기록이야.</p>
+        <h2>OUR STORY</h2>
+        <div id="story-list" class="story-container">
+            </div>
     </div>
 
     <div id="p2" class="page">
         <h2>MEMORY QUIZ</h2>
-        <div style="margin-top: 40px; width: 100%;">
-            <p class="page-text" style="margin-bottom: 30px;">Q. 우리가 처음으로 같이<br>먹었던 음식은 무엇일까?</p>
-            
-            <button class="quiz-option" onclick="answerQuiz(false)">1. 파스타</button>
-            <button class="quiz-option" onclick="answerQuiz(true)">2. 떡볶이</button>
-            <button class="quiz-option" onclick="answerQuiz(false)">3. 삼겹살</button>
-        </div>
-        <p id="quiz-hint" style="font-size: 0.8rem; color: var(--gold-accent); margin-top: 20px; opacity: 0;">정답을 맞춰야 다음 페이지가 열려! 😉</p>
+        <div id="quiz-area" style="width: 100%; margin-top: 30px; text-align: center;">
+            </div>
     </div>
 
     <div id="p3" class="page">
         <h2>DEAR YOU</h2>
         <div style="margin: auto 0; text-align: center; width: 100%;">
-            <p class="page-text" style="font-style: italic; font-size: 1.1rem; margin-bottom: 30px;">"매일매일 더 사랑해."</p>
-            <p class="page-text">
-                이 홈페이지를 만드는 동안<br>너랑 같이 했던 시간들이<br>하나하나 다 생각나서 행복했어.<br><br>
-                앞으로도 더 많은 페이지를<br>예쁘게 채워나가자.<br>항상 내 곁에 있어줘서 고마워.
+            <p class="story-desc" style="font-size: 1.1rem; font-style: italic; color: var(--primary-green);">"우리의 다음 페이지도 함께하자"</p>
+            
+            <p class="story-desc" style="margin-top: 30px;">
+                여기에 정성스러운 편지 내용을 적어주세요.<br>
+                사진 수십 장과 퀴즈를 모두 통과한<br>
+                여자친구에게 전하는 마지막 진심입니다. ❤️
             </p>
-            <p style="margin-top:40px; font-weight: bold; color: var(--primary-green); font-size: 1.2rem;">2026. 03. 24 <br> 너의 남자친구가</p>
+
+            <p style="margin-top:50px; font-weight: bold; color: var(--primary-green);">2026. 03. 24 <br> 너의 남자친구가</p>
         </div>
     </div>
 </div>
@@ -134,88 +115,136 @@
 <button id="music-toggle">🎵 MUSIC START</button>
 
 <script>
-    /* [수정 포인트: 비밀번호 설정] */
-    const CORRECT_PW = "0324"; 
+    /* ===========================================================
+       [수정 포인트 1: 스토리 (사진 & 설명)]
+       - img: images 폴더에 넣은 사진 파일명 (확장자 주의!)
+       - desc: 사진 아래에 들어갈 설명 (줄바꿈은 <br> 사용)
+       - 사진을 10장, 20장 원하는 만큼 { } 묶음을 복사해서 늘리세요.
+       ===========================================================
+    */
+    const stories = [
+        { img: "images/1.jpg", desc: "첫 번째 사진 설명입니다.<br>이때 정말 즐거웠지!" },
+        { img: "images/2.jpg", desc: "두 번째 사진 설명입니다.<br>너랑 먹은 음식이 제일 맛있어." },
+        { img: "images/3.jpg", desc: "세 번째 사진 설명입니다.<br>날씨가 참 좋았던 날." },
+        { img: "images/4.jpg", desc: "네 번째 사진 설명..." },
+        { img: "images/5.jpg", desc: "다섯 번째 사진 설명..." },
+        { img: "images/6.jpg", desc: "여섯 번째 사진 설명..." },
+        { img: "images/7.jpg", desc: "일곱 번째 사진 설명..." },
+        { img: "images/8.jpg", desc: "여덟 번째 사진 설명..." },
+        { img: "images/9.jpg", desc: "아홉 번째 사진 설명..." },
+        { img: "images/10.jpg", desc: "열 번째 사진 설명. ❤️" },
+    ];
 
+    /* ===========================================================
+       [수정 포인트 2: 퀴즈 (3문제)]
+       - q: 질문 내용
+       - options: 보기 3개
+       - answer: 정답 인덱스 (0, 1, 2 중 하나. 첫 번째가 0번임)
+       ===========================================================
+    */
+    const quizzes = [
+        { 
+            q: "우리가 처음 만난 장소는 어디일까요?", 
+            options: ["수원역", "강남역", "홍대입구"], 
+            answer: 0 // 수원역이 정답일 경우
+        },
+        { 
+            q: "우리가 사귀기 시작한 날짜는?", 
+            options: ["3월 24일", "4월 1일", "5월 5일"], 
+            answer: 0 
+        },
+        { 
+            q: "내가 가장 좋아하는 너의 모습은?", 
+            options: ["웃는 모습", "먹는 모습", "전부 다"], 
+            answer: 2 
+        }
+    ];
+
+    /* [수정 포인트 3: 비밀번호] */
+    const CORRECT_PW = "0325"; 
+
+    /* [수정 포인트 4: 유튜브 배경음악 ID] 
+       유튜브 주소창 v= 뒤의 문자열만 넣으세요.
+    */
+    const VIDEO_ID = 'qMkQ3lAD418'; 
+
+    // --- 이하 로직 (가급적 수정하지 마세요) ---
     let currentId = 'p1';
-    let isUnlocked = false;
-    let quizSolved = false;
+    let currentQuizIdx = 0;
+    let flipSound = new Audio("flip.mp3"); // GitHub에 flip.mp3를 꼭 올리세요!
+    flipSound.preload = "auto";
 
-    // 책 넘기는 효과음 (로딩 시점에 미리 생성)
-    const flipSound = new Audio("https://raw.githubusercontent.com/ArunMichaelDsouza/book-flip-animation/master/assets/audio/page-flip.mp3");
-    flipSound.preload = "auto"; // 미리 로드하여 딜레이 방지
+    function renderStories() {
+        const container = document.getElementById('story-list');
+        stories.forEach(item => {
+            container.innerHTML += `
+                <div class="story-item">
+                    <img src="${item.img}" class="story-img" loading="lazy">
+                    <p class="story-desc">${item.desc}</p>
+                </div>
+            `;
+        });
+    }
 
-    // 1. 비밀번호 확인
-    function checkPassword() {
-        const input = document.getElementById('pw-input').value;
-        if (input === CORRECT_PW) {
-            unlockExperience();
+    function renderQuiz() {
+        const quizArea = document.getElementById('quiz-area');
+        const qData = quizzes[currentQuizIdx];
+        let optionsHtml = qData.options.map((opt, idx) => 
+            `<button onclick="checkAnswer(${idx})" style="width:100%; padding:15px; margin-bottom:12px; border:1px solid var(--gold-accent); background:white; border-radius:10px; cursor:pointer; font-family:inherit;">${opt}</button>`
+        ).join('');
+
+        quizArea.innerHTML = `
+            <p class="story-desc" style="font-weight:700; color:var(--primary-green); margin-bottom:30px;">Q${currentQuizIdx+1}. ${qData.q}</p>
+            ${optionsHtml}
+        `;
+    }
+
+    function checkAnswer(idx) {
+        if (idx === quizzes[currentQuizIdx].answer) {
+            currentQuizIdx++;
+            if (currentQuizIdx < quizzes.length) {
+                alert("정답!");
+                renderQuiz();
+            } else {
+                alert("통과!");
+                document.getElementById('nav-letter').style.opacity = "1";
+                document.getElementById('nav-letter').style.pointerEvents = "auto";
+                flipPage('p3');
+            }
         } else {
-            document.getElementById('lock-content').classList.add('shake');
-            document.getElementById('error-msg').style.display = 'block';
-            setTimeout(() => document.getElementById('lock-content').classList.remove('shake'), 400);
+            alert("이걸 틀리다니..");
+        }
+    }
+
+    function checkPassword() {
+        if (document.getElementById('pw-input').value === CORRECT_PW) {
+            unlock();
+        } else {
+            alert("비밀번호가 틀립니다.(힌트는 우리가 만난 날)");
             document.getElementById('pw-input').value = "";
         }
     }
 
-    // 2. 잠금 해제 (★소리 권한 획득 포인트★)
-    function unlockExperience() {
-        const lockScreen = document.getElementById('lock-screen');
-        
-        // 브라우저 소리 제한을 풀기 위해 사용자가 버튼을 눌렀을 때 빈 소리를 재생시킴
-        flipSound.play().then(() => {
-            flipSound.pause(); // 바로 일시정지
-            flipSound.currentTime = 0;
-            isUnlocked = true; // 이제부터 자유롭게 소리 재생 가능
-        }).catch(err => {
-            console.log("Audio Context Locked:", err);
-            isUnlocked = true; // 실패해도 일단 넘어가게 처리
-        });
-
-        lockScreen.style.opacity = '0';
-        lockScreen.style.pointerEvents = 'none';
+    function unlock() {
+        const lock = document.getElementById('lock-screen');
+        lock.style.opacity = "0";
         setTimeout(() => {
-            lockScreen.style.display = 'none';
+            lock.style.display = "none";
             document.getElementById('main-nav').classList.add('show');
-            document.getElementById('music-toggle').style.display = 'block';
+            document.getElementById('music-toggle').style.display = "block";
         }, 800);
+        flipSound.play().then(()=> {flipSound.pause(); flipSound.currentTime=0;});
     }
 
-    // 3. 퀴즈 정답 확인
-    function answerQuiz(isCorrect) {
-        if (isCorrect) {
-            alert("정답이야! ❤️");
-            quizSolved = true;
-            document.getElementById('nav-letter').style.opacity = "1";
-            document.getElementById('nav-letter').style.pointerEvents = "auto";
-            document.getElementById('quiz-hint').innerText = "정답! 이제 Letter 버튼을 눌러봐.";
-            document.getElementById('quiz-hint').style.opacity = "1";
-            flipPage('p3'); // 정답 시 자동 이동
-        } else {
-            alert("땡! 다시 한번 생각해봐 🥺");
-            document.getElementById('quiz-hint').style.opacity = "1";
-        }
-    }
-
-    // 4. 페이지 넘기기 (효과음 재생 포함)
     function flipPage(targetId) {
-        if (currentId === targetId || !isUnlocked) return;
-        
-        // 퀴즈 미해결 방어
-        if (targetId === 'p3' && !quizSolved) {
-            alert("퀴즈 정답을 먼저 맞춰줘! ✨");
+        if (currentId === targetId) return;
+        if (targetId === 'p3' && currentQuizIdx < quizzes.length) {
+            alert("퀴즈를 풀어야 읽을 수 있습니다.");
             return;
         }
-
-        // 책 넘기는 소리 재생
-        try {
-            flipSound.currentTime = 0;
-            flipSound.play();
-        } catch(e) { console.log("Sound Play Error:", e); }
-        
+        try { flipSound.currentTime = 0; flipSound.play(); } catch(e) {}
         const pages = ['p1', 'p2', 'p3'];
         const targetIndex = pages.indexOf(targetId);
-        
         pages.forEach((id, index) => {
             const page = document.getElementById(id);
             if (index < targetIndex) page.className = 'page flipped';
@@ -225,14 +254,11 @@
         currentId = targetId;
     }
 
-    /* [수정 포인트: 유튜브 BGM ID] */
-    const VIDEO_ID = 'NE69eGDA9tk'; 
-
+    // 유튜브 API 설정
     let player, isApiReady = false, isPlaying = false;
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
-    
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('yt-player', {
             height: '0', width: '0', videoId: VIDEO_ID,
@@ -240,15 +266,14 @@
             events: { 'onReady': () => isApiReady = true }
         });
     }
-
     document.getElementById('music-toggle').onclick = function() {
         if (!isApiReady) return;
         if (!isPlaying) { player.playVideo(); this.innerText = "🎵 MUSIC STOP"; }
         else { player.pauseVideo(); this.innerText = "🎵 MUSIC START"; }
         isPlaying = !isPlaying;
     };
-    
-    document.getElementById('pw-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
+
+    window.onload = () => { renderStories(); renderQuiz(); };
 </script>
 </body>
 </html>
